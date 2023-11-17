@@ -10,6 +10,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	"echo-playground/services"
 )
@@ -21,12 +22,22 @@ func main() {
 	}
 
 	e := echo.New()
+	e.Use(middleware.Logger())  // Added logging middleware
+	e.Use(middleware.Recover()) // Recovery middleware
 
+	// Routes
 	e.GET("/", handleRoot)
-	e.GET("/students/flagged", handleFlaggedStudents)
-	e.GET("/students/flagged/messages", handleFlaggedStudentMessages)
+	e.GET("/students/:id", getStudent)
+	e.GET("/students/:id/report", getStudentReport)
+	e.GET("/flagged-students", handleFlaggedStudents)
+	e.GET("/flagged-student-messages", handleFlaggedStudentMessages)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	// Dynamic server port configuration
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "1323" // Default port if not set
+	}
+	e.Logger.Fatal(e.Start(":" + port))
 }
 
 func handleRoot(c echo.Context) error {
@@ -36,6 +47,106 @@ func handleRoot(c echo.Context) error {
 	}
 
 	return c.String(http.StatusOK, response)
+}
+
+func getStudent(c echo.Context) error {
+	// Fetching student ID from route parameter
+	id := c.Param("id")
+
+	fmt.Println("Opening CSV file...")
+	f, err := os.Open("data/data.csv")
+	if err != nil {
+		fmt.Printf("Failed to open data file: %v\n", err)
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to open data file: %v", err))
+	}
+	defer f.Close()
+
+	fmt.Println("Reading CSV file...")
+	r := csv.NewReader(f)
+	records, err := r.ReadAll()
+	if err != nil {
+		fmt.Printf("Failed to read data file: %v\n", err)
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to read data file: %v", err))
+	}
+
+	var studentData map[string]string
+	for i, record := range records {
+		if i == 0 { // Skip header line
+			continue
+		}
+
+		if record[0] == id {
+			studentData = map[string]string{
+				"student_id":           record[0],
+				"school_year":          record[1],
+				"avg_daily_attendance": record[2],
+				"absence_count":        record[3],
+				"infraction_count":     record[4],
+			}
+			break
+		}
+	}
+
+	if studentData == nil {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("No student found with ID: %s", id))
+	}
+
+	return c.JSON(http.StatusOK, studentData)
+}
+
+func getStudentReport(c echo.Context) error {
+	// Fetching student ID from route parameter
+	id := c.Param("id")
+
+	// Open and read the CSV file
+	f, err := os.Open("data/data.csv")
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to open data file: %v", err))
+	}
+	defer f.Close()
+
+	r := csv.NewReader(f)
+	records, err := r.ReadAll()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to read data file: %v", err))
+	}
+
+	var studentData map[string]string
+	found := false
+	for i, record := range records {
+		if i == 0 { // Skip header line
+			continue
+		}
+
+		if record[0] == id {
+			studentData = map[string]string{
+				"student_id":           record[0],
+				"school_year":          record[1],
+				"avg_daily_attendance": record[2],
+				"absence_count":        record[3],
+				"infraction_count":     record[4],
+			}
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("No student found with ID: %s", id))
+	}
+
+	// Generating a prompt for OpenAI
+	prompt := fmt.Sprintf("Based on the following student data: average daily attendance of %s%%, %s absences, and %s infractions in the school year %s, how is the student performing?",
+		studentData["avg_daily_attendance"], studentData["absence_count"], studentData["infraction_count"], studentData["school_year"])
+
+	response, err := services.ChatWithOpenAI(prompt)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error generating report: %v", err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"report": response,
+	})
 }
 
 func handleFlaggedStudents(c echo.Context) error {
