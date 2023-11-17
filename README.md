@@ -34,6 +34,19 @@ Learning Echo and Golang. The goal of this project is to build something that wi
 
 4. Open your browser and navigate to [http://localhost:1323](http://localhost:1323)
 
+5. To view the output in a user-friendly format, execute the following command.
+
+   ```bash
+    message_template=$(curl -s http://localhost:1323/students/flagged | jq -r '.message' | awk '{printf "%s\\n", $0}')
+   student_ids=$(curl -s http://localhost:1323/students/flagged | jq -r '.students[]')
+
+   for id in $student_ids; do
+      echo -e "${message_template//\\[Student's Name\\]/$id}"
+   done
+   ```
+
+   This command fetches data from the specified URL and then displays it in a neatly formatted manner.
+
 ## Deployment
 
 ### Prerequisites

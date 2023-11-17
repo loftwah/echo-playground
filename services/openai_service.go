@@ -12,7 +12,7 @@ import (
 func ChatWithOpenAI(prompt string) (string, error) {
 	client := openai.NewClient(os.Getenv("OPENAI_KEY"))
 
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second) // Increased to 60 seconds
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second) // Increased to 120 seconds
 	defer cancel()
 
 	resp, err := client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{

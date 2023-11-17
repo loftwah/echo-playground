@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -23,6 +24,7 @@ func main() {
 
 	e.GET("/", handleRoot)
 	e.GET("/students/flagged", handleFlaggedStudents)
+	e.GET("/students/flagged/messages", handleFlaggedStudentMessages)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -95,4 +97,65 @@ func handleFlaggedStudents(c echo.Context) error {
 		"students": flaggedStudents,
 		"message":  responseMessage,
 	})
+}
+
+func handleFlaggedStudentMessages(c echo.Context) error {
+	const highAbsenceThreshold = 20
+
+	fmt.Println("Opening CSV file for messages...")
+	f, err := os.Open("data/data.csv")
+	if err != nil {
+		fmt.Printf("Failed to open data file: %v\n", err)
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to open data file: %v", err))
+	}
+	defer f.Close()
+
+	fmt.Println("Reading CSV file for messages...")
+	r := csv.NewReader(f)
+	records, err := r.ReadAll()
+	if err != nil {
+		fmt.Printf("Failed to read data file: %v\n", err)
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to read data file: %v", err))
+	}
+
+	// Identify flagged students
+	var flaggedStudents []string
+	for i, record := range records {
+		if i == 0 { // Skip header line
+			continue
+		}
+
+		studentID := record[0]
+		absenceCount, _ := strconv.Atoi(record[3])
+
+		if absenceCount > highAbsenceThreshold {
+			flaggedStudents = append(flaggedStudents, studentID)
+		}
+	}
+
+	if len(flaggedStudents) == 0 {
+		fmt.Println("No flagged students found.")
+		return c.String(http.StatusOK, "No flagged students found.")
+	}
+
+	// Generate one message template
+	prompt := "Create a message template indicating that a student has been absent too many times and may need additional support. Include placeholders for the student's name and other details."
+	fmt.Println(prompt)
+	messageTemplate, err := services.ChatWithOpenAI(prompt)
+	if err != nil {
+		fmt.Printf("Error generating message template: %v\n", err)
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Error generating message template: %v", err))
+	}
+
+	// Replace placeholders and create markdown output
+	var markdownOutput strings.Builder
+	markdownOutput.WriteString("Personalized messages:\n\n")
+
+	for _, studentID := range flaggedStudents {
+		personalizedMessage := strings.ReplaceAll(messageTemplate, "[Student's Name]", studentID)
+		markdownOutput.WriteString(fmt.Sprintf("### Message for Student ID: %s\n\n%s\n\n---\n\n", studentID, personalizedMessage))
+	}
+
+	// Return the markdown output as part of the HTTP response
+	return c.String(http.StatusOK, markdownOutput.String())
 }
