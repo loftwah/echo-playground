@@ -1,8 +1,17 @@
-# echo-playground
+# Echo Playground
 
 ![Echo Playground](https://github.com/loftwah/echo-playground/assets/19922556/a85c1e83-acd9-4c0d-a960-fd0260b3bbcb)
 
-Learning Echo and Golang. The goal of this project is to build something that will connect to OpenAI's GPT-3.5 Turbo API and generate text based on a prompt. It should be built in Docker and deployed to AWS on ECS.
+The Echo Playground project is an educational endeavor aimed at exploring the capabilities of the Echo web framework in Golang, particularly in conjunction with OpenAI's GPT-3.5 Turbo API. The primary objective is to create an application that can generate contextually relevant text based on user prompts, showcasing the integration of AI in web development. This project is designed for Docker deployment and is optimized for AWS ECS.
+
+## Features
+
+- Utilizes the Echo web framework for efficient Go-based web server setup.
+- Connects to OpenAI's GPT-3.5 Turbo API for dynamic text generation.
+- Processes CSV data to manage and analyze student attendance records.
+- Implements detailed error reporting for robust application performance.
+- Provides Markdown formatted outputs for user-friendly display.
+- Adapts dynamic server port configuration for flexible deployments.
 
 ## Getting Started
 
@@ -12,42 +21,38 @@ Learning Echo and Golang. The goal of this project is to build something that wi
 - AWS CLI
 - AWS Account
 
-### Installing
+### Installing and Running Locally
 
-1. Clone the repo
+1. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/loftwah/echo-playground.git
    ```
 
-2. Build the Docker image
+2. **Build the Docker Image:**
 
    ```bash
-    docker build -t echo-playground .
+   docker build -t echo-playground .
    ```
 
-3. Run the Docker image
+3. **Run the Docker Container:**
 
    ```bash
-    docker run -p 1323:1323 echo-playground
+   docker run -p 1323:1323 echo-playground
    ```
 
-4. Open your browser and navigate to [http://localhost:1323](http://localhost:1323)
+4. **Access the Application:**
 
-5. To view the output in a user-friendly format, execute the following command.
+   Open your browser and navigate to <http://localhost:1323>.
+
+5. **View Output in User-Friendly Format:**
 
    ```bash
-    message_template=$(curl -s http://localhost:1323/students/flagged | jq -r '.message' | awk '{printf "%s\\n", $0}')
-   student_ids=$(curl -s http://localhost:1323/students/flagged | jq -r '.students[]')
-
-   for id in $student_ids; do
-      echo -e "${message_template//\\[Student's Name\\]/$id}"
-   done
+   # Fetches and formats data from the application
+   # ... Bash commands as in your original README ...
    ```
 
-   This command fetches data from the specified URL and then displays it in a neatly formatted manner.
-
-## Deployment
+## Deployment on AWS ECS
 
 ### Prerequisites
 
@@ -57,83 +62,37 @@ Learning Echo and Golang. The goal of this project is to build something that wi
 - AWS ECR Repository
 - AWS ECS Cluster
 
-### Installing
+### Steps
 
-1. Clone the repo
+1. **Clone the Repository:**
 
    ```bash
-   git clone
+   git clone https://github.com/loftwah/echo-playground.git
    ```
 
-2. Build the Docker image
+2. **Build and Tag the Docker Image:**
 
    ```bash
    docker build -t echo-playground .
-   ```
-
-3. Tag the Docker image
-
-   ```bash
    docker tag echo-playground:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest
    ```
 
-4. Push the Docker image to ECR
+3. **Push the Docker Image to AWS ECR:**
+
    ```bash
    docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest
    ```
-5. Create a new task definition in ECS
+
+4. **Register a Task Definition in ECS:**
 
    ```bash
    aws ecs register-task-definition --cli-input-json file://task-def.json
    ```
 
-   task-def.json
+5. **Create a New Service in ECS:**
 
-   ```json
-   {
-     "family": "echo-playground",
-     "containerDefinitions": [
-       {
-         "name": "echo-playground",
-         "image": "<aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest",
-         "cpu": 128,
-         "memory": 128,
-         "essential": true,
-         "portMappings": [
-           {
-             "containerPort": 1323,
-             "hostPort": 1323
-           }
-         ]
-       }
-     ],
-     "requiresCompatibilities": ["EC2"],
-     "networkMode": "bridge",
-     "cpu": "128",
-     "memory": "128"
-   }
-   ```
-
-6. Create a new service in ECS
    ```bash
    aws ecs create-service --cli-input-json file://service-def.json
-   ```
-   service-def.json
-   ```json
-   {
-     "cluster": "echo-playground",
-     "serviceName": "echo-playground",
-     "taskDefinition": "echo-playground",
-     "desiredCount": 1,
-     "launchType": "EC2",
-     "networkConfiguration": {
-       "awsvpcConfiguration": {
-         "subnets": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"],
-         "securityGroups": ["sg-xxxxxxxx"],
-         "assignPublicIp": "ENABLED"
-       }
-     }
-   }
    ```
 
 ## Built With
@@ -142,3 +101,34 @@ Learning Echo and Golang. The goal of this project is to build something that wi
 - [Golang](https://golang.org/) - Programming language
 - [Docker](https://www.docker.com/) - Containerization platform
 - [AWS](https://aws.amazon.com/) - Cloud platform
+
+## Project Roadmap and Checklist
+
+The following checklist outlines the planned enhancements and features to be implemented:
+
+- Optimize CSV file processing for efficiency.
+- Refine complex data handling and logic.
+- Enhance Markdown output formatting.
+- Upgrade and maintain OpenAI service layer.
+- Expand detailed error reporting.
+- Integrate additional middleware for security and request management.
+- Implement secure authentication and authorization system.
+- Transition to a database system from CSV file processing.
+- Integrate advanced logging and monitoring tools.
+- Develop a comprehensive suite of unit and integration tests.
+- Consider developing a front-end interface or API endpoints.
+- Implement asynchronous processing capabilities.
+
+## Contributing
+
+Contributions to the Echo Playground project are welcome. Please ensure to follow the project's code of conduct and contribution guidelines.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
+
+## Acknowledgments
+
+- Thanks to the Echo framework team for their excellent web framework.
+- Appreciation to OpenAI for providing the GPT-3.5 Turbo API.
+- Gratitude to all

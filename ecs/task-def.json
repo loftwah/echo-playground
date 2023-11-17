@@ -1,0 +1,22 @@
+{
+    "family": "echo-playground",
+    "containerDefinitions": [
+      {
+        "name": "echo-playground",
+        "image": "<aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest",
+        "cpu": 128,
+        "memory": 128,
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 1323,
+            "hostPort": 1323
+          }
+        ]
+      }
+    ],
+    "requiresCompatibilities": ["EC2"],
+    "networkMode": "bridge",
+    "cpu": "128",
+    "memory": "128"
+  }

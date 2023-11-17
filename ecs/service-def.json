@@ -1,0 +1,14 @@
+{
+    "cluster": "echo-playground",
+    "serviceName": "echo-playground",
+    "taskDefinition": "echo-playground",
+    "desiredCount": 1,
+    "launchType": "EC2",
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "subnets": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"],
+        "securityGroups": ["sg-xxxxxxxx"],
+        "assignPublicIp": "ENABLED"
+      }
+    }
+  }
