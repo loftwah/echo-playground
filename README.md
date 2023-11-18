@@ -8,10 +8,10 @@ Imagine a place where your words turn into code magic, where AI becomes your bra
 
 ## What's Cooking in Echo Playground? 🍳
 
-* **AI-Powered Text Generation:** Throw in a prompt, and watch the AI whip up contextually rich text faster than you can say "abracadabra"! 📜✨
-* **Attendance Alchemy:** Our AI isn't just creative; it's got an eye for details too! It magically keeps track of who's attending school and who's not – a bit like a friendly neighborhood watch, but for schools! 🕵️‍♂️🏫
-* **Docker & AWS ECS Harmony:** Everything’s neatly packed in Docker containers, floating gracefully in the cloud with AWS ECS. It’s like having your cake and eating it too, but with cloud computing! ☁️🍰
-* **Echo Web Framework Wonders:** We’re maneuvering through the Echo web framework with the agility of a ninja, crafting a server that’s not only robust but also as smooth as a jazz tune. 🎷🥋
+- **AI-Powered Text Generation:** Throw in a prompt, and watch the AI whip up contextually rich text faster than you can say "abracadabra"! 📜✨
+- **Attendance Alchemy:** Our AI isn't just creative; it's got an eye for details too! It magically keeps track of who's attending school and who's not – a bit like a friendly neighborhood watch, but for schools! 🕵️‍♂️🏫
+- **Docker & AWS ECS Harmony:** Everything’s neatly packed in Docker containers, floating gracefully in the cloud with AWS ECS. It’s like having your cake and eating it too, but with cloud computing! ☁️🍰
+- **Echo Web Framework Wonders:** We’re maneuvering through the Echo web framework with the agility of a ninja, crafting a server that’s not only robust but also as smooth as a jazz tune. 🎷🥋
 
 ## Ready for an Adventure? 🚀
 
@@ -94,9 +94,9 @@ This command uploads our production-ready Docker image to the cloud, making it a
 
 With the image now in ECR, we proceed to deploy it on AWS ECS (Elastic Container Service), a highly scalable and high-performance container orchestration service.
 
-* **Create a Task Definition in ECS:** We define a task in `ecs/task-def.json`, which includes our container configuration, resource allocation (CPU and memory), and network settings. It serves as a blueprint for how our Docker container should run on ECS.
-* **Set Up the ECS Service:** The `ecs/service-def.json` configures the ECS service. Here, we specify the cluster, service name, and network configuration. The service ensures our application is maintained at the desired state, handling tasks like starting new instances if needed and managing public IP assignment.
-* **Deploy Using ECS:** Finally, we use the AWS CLI to register the task definition and create the service in ECS. This process tells ECS how to run our application, where to run it, and how to manage networking aspects.
+- **Create a Task Definition in ECS:** We define a task in `ecs/task-def.json`, which includes our container configuration, resource allocation (CPU and memory), and network settings. It serves as a blueprint for how our Docker container should run on ECS.
+- **Set Up the ECS Service:** The `ecs/service-def.json` configures the ECS service. Here, we specify the cluster, service name, and network configuration. The service ensures our application is maintained at the desired state, handling tasks like starting new instances if needed and managing public IP assignment.
+- **Deploy Using ECS:** Finally, we use the AWS CLI to register the task definition and create the service in ECS. This process tells ECS how to run our application, where to run it, and how to manage networking aspects.
 
 ```bash
 aws ecs register-task-definition --cli-input-json file://ecs/task-def.json
@@ -114,20 +114,27 @@ These commands set everything in motion, deploying our Echo Playground applicati
 
 ## Project Roadmap and Checklist
 
-The following checklist outlines the planned enhancements and features to be implemented:
+| Priority | Feature                                                             | Score | Description                                                                                          |
+| -------- | ------------------------------------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------- |
+| 1        | Upgrade and Maintain OpenAI Service Layer                           | 2     | Ensures AI components are up-to-date and functional. Central to the project.                         |
+| 2        | Implement Secure Authentication and Authorization                   | 2     | Crucial for ensuring data privacy and security with sensitive student data.                          |
+| 3        | Refine Complex Data Handling and Logic                              | 2     | Important for efficiently processing and integrating CSV data.                                       |
+| 4        | Develop a Comprehensive Suite of Unit and Integration Tests         | 2     | Critical for ensuring the reliability and stability of the application.                              |
+| 5        | Optimize CSV File Processing for Efficiency                         | 3     | Essential for handling and analyzing CSV data effectively, especially with larger datasets.          |
+| 6        | Expand Detailed Error Reporting                                     | 3     | Important for debugging and improving the application's quality.                                     |
+| 7        | Implement Asynchronous Processing Capabilities                      | 3     | Improves performance for data-intensive tasks and enhances user experience.                          |
+| 8        | Integrate Additional Middleware for Security and Request Management | 3     | Enhances security and efficiency in handling requests.                                               |
+| 9        | Integrate Advanced Logging and Monitoring Tools (Prometheus)        | 3     | Essential for long-term maintenance and scalability.                                                 |
+| 10       | Enhance Markdown Output Formatting                                  | 4     | Improves user experience but is less critical compared to other features.                            |
+| 11       | Consider Developing a Front-End Interface or API Endpoints          | 4     | Would significantly increase usability and accessibility but requires additional development effort. |
 
-- Optimize CSV file processing for efficiency.
-- Refine complex data handling and logic.
-- Enhance Markdown output formatting.
-- Upgrade and maintain OpenAI service layer.
-- Expand detailed error reporting.
-- Integrate additional middleware for security and request management.
-- Implement secure authentication and authorization system.
-- Integrate databases to bring users existing data into the mix.
-- Integrate advanced logging and monitoring tools.
-- Develop a comprehensive suite of unit and integration tests.
-- Consider developing a front-end interface or API endpoints.
-- Implement asynchronous processing capabilities.
+### Additional Features for Consideration:
+
+| Priority | Feature                                         | Score | Description                                                                                      |
+| -------- | ----------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------ |
+| 1        | AI-Driven Personalized Learning Recommendations | 2     | Use AI to create tailored learning recommendations for each student based on CSV data.           |
+| 2        | Automated Student Wellbeing Checks              | 2     | Leverage AI to assess student wellbeing regularly using engagement and attendance data from CSV. |
+| 3        | Behavioral Pattern Analysis Tool                | 2     | Analyze and report on patterns in student behavior and its impact on performance using CSV data. |
 
 ## Contributing
 
