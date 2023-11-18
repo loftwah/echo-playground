@@ -102,7 +102,7 @@ The following checklist outlines the planned enhancements and features to be imp
 - Expand detailed error reporting.
 - Integrate additional middleware for security and request management.
 - Implement secure authentication and authorization system.
-- Transition to a database system from CSV file processing.
+- Integrate databases to bring users existing data into the mix.
 - Integrate advanced logging and monitoring tools.
 - Develop a comprehensive suite of unit and integration tests.
 - Consider developing a front-end interface or API endpoints.
