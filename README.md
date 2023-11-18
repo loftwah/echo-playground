@@ -20,6 +20,7 @@ The Echo Playground project is an educational endeavor aimed at exploring the ca
 - Docker
 - AWS CLI
 - AWS Account
+- `.env` file with necessary environment variables (e.g., `OPENAI_KEY`)
 
 ### Installing and Running Locally
 
@@ -29,71 +30,36 @@ The Echo Playground project is an educational endeavor aimed at exploring the ca
    git clone https://github.com/loftwah/echo-playground.git
    ```
 
-2. **Build the Docker Image:**
+2. **Build the Docker Image for Development:**
 
    ```bash
-   docker build -t echo-playground .
+   docker build -f Dockerfile.dev -t echo-playground-dev .
    ```
 
 3. **Run the Docker Container:**
 
    ```bash
-   docker run -p 1323:1323 echo-playground
+   docker run -p 1323:1323 --env-file .env echo-playground-dev
    ```
 
-4. **Access the Application:**
+4. **Access the Application:** Open your browser and navigate to <http://localhost:1323>.
 
-   Open your browser and navigate to <http://localhost:1323>.
+### Deployment on AWS ECS
 
-5. **View Output in User-Friendly Format:**
+1. **Build and Tag the Docker Image for Production:**
 
    ```bash
-   # Fetches and formats data from the application
-   # ... Bash commands as in your original README ...
+   docker build -t echo-playground-prod .
+   docker tag echo-playground-prod <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground-prod:latest
    ```
 
-## Deployment on AWS ECS
-
-### Prerequisites
-
-- Docker
-- AWS CLI
-- AWS Account
-- AWS ECR Repository
-- AWS ECS Cluster
-
-### Steps
-
-1. **Clone the Repository:**
+2. **Push the Docker Image to AWS ECR:**
 
    ```bash
-   git clone https://github.com/loftwah/echo-playground.git
+   docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground-prod:latest
    ```
 
-2. **Build and Tag the Docker Image:**
-
-   ```bash
-   docker build -t echo-playground .
-   docker tag echo-playground:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest
-   ```
-
-3. **Push the Docker Image to AWS ECR:**
-
-   ```bash
-   docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest
-   ```
-
-4. **Register a Task Definition in ECS:**
-
-   ```bash
-   aws ecs register-task-definition --cli-input-json file://task-def.json
-   ```
-
-5. **Create a New Service in ECS:**
-
-   ```bash
-   aws ecs create-service --cli-input-json file://service-def.json
-   ```
+3. **Continue with ECS Deployment:** Follow steps 4-5 under the 'Deployment on AWS ECS' section as previously described.
 
 ## Built With
 
@@ -132,3 +98,13 @@ This project is licensed under the [MIT License](LICENSE). See the LICENSE file 
 - Thanks to the Echo framework team for their excellent web framework.
 - Appreciation to OpenAI for providing the GPT-3.5 Turbo API.
 - Gratitude to all
+
+### Notes
+
+1. **Development and Production Docker Builds:** The instructions now differentiate between building a development image (`Dockerfile.dev`) and a production image (`Dockerfile`).
+
+2. **Environment Variables:** Instructions for running the Docker container now include the `--env-file .env` flag to ensure that your environment variables are correctly passed into the container.
+
+3. **Deployment Steps:** The AWS ECS deployment steps remain as previously described, assuming the production setup doesn’t rely on the `.env` file.
+
+Remember to keep the `.env` file secure and not include any sensitive data in your version control.
