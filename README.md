@@ -143,9 +143,9 @@ This project is licensed under the [MIT License](LICENSE). See the LICENSE file 
 
 ### Notes
 
-1. **Development and Production Docker Builds:** The instructions now differentiate between building a development image (`Dockerfile.dev`) and a production image (`Dockerfile`).
+1. **Development and Production Docker Builds:** The instructions now differentiate between building a development image (`Dockerfile.dev`) and a production image (`Dockerfile`). Use Docker Compose for development to make it simpler. Production instructions are in the `/ecs` directory.
 
-2. **Environment Variables:** Instructions for running the Docker container now include the `--env-file .env` flag to ensure that your environment variables are correctly passed into the container.
+2. **Environment Variables:** I didn't actually know this before but to run a Docker container with a `.env` file present include the `--env-file .env` flag to ensure that your environment variables are correctly passed into the container. This is probably why all of my ECS stuff failed for ages.
 
 3. **Deployment Steps:** The AWS ECS deployment steps remain as previously described, assuming the production setup doesn’t rely on the `.env` file.
 
