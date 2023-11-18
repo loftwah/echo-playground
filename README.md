@@ -4,7 +4,7 @@
 
 🎉 Welcome to the **Echo Playground**, an adventure in the world of coding where Echo's web framework and OpenAI's GPT-3.5 Turbo API come together in a dazzling display of tech wizardry! 🧙‍♂️
 
-Imagine a place where your words turn into code magic 🪄, where AI becomes your brainstorming buddy, and Golang isn't just a language, but a playground for the curious minds. That's what Echo Playground is all about!
+Imagine a place where your words turn into code magic, where AI becomes your brainstorming buddy, and Golang isn't just a language, but a playground for the curious minds. That's what Echo Playground is all about!
 
 ## What's Cooking in Echo Playground? 🍳
 
