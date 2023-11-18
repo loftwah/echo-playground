@@ -144,10 +144,6 @@ These commands set everything in motion, deploying our Echo Playground applicati
 
 This roadmap prioritizes crucial updates and enhancements while incorporating new features that leverage the enriched dataset to support and enhance the student learning experience.
 
-## Contributing
-
-Contributions to the Echo Playground project are welcome. Please ensure to follow the project's code of conduct and contribution guidelines.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE). See the LICENSE file for details.
