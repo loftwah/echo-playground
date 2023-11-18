@@ -55,9 +55,17 @@ Whether you're a code newbie or a seasoned wizard, Echo Playground is your gatew
    docker run -p 1323:1323 --env-file .env echo-playground-dev
    ```
 
-4. **Access the Application:** Open your browser and navigate to <http://localhost:1323>.
+4. ** Run the Docker Container with Docker Compose:**
+
+   ```bash
+   docker-compose up
+   ```
+
+5. **Access the Application:** Open your browser and navigate to <http://localhost:1323>.
 
 ### Deployment on AWS ECS
+
+> **Note:** The following steps assume that you have already created an AWS ECR repository and have the AWS CLI configured with the appropriate credentials.
 
 1. **Build and Tag the Docker Image for Production:**
 
@@ -73,6 +81,8 @@ Whether you're a code newbie or a seasoned wizard, Echo Playground is your gatew
    ```
 
 3. **Continue with ECS Deployment:** Follow steps 4-5 under the 'Deployment on AWS ECS' section as previously described.
+
+> **Note:** Eventually we want to do this with CI/CD (GitHub Actions).
 
 ## Built With
 
