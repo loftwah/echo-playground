@@ -6,8 +6,8 @@
   "launchType": "FARGATE",
   "networkConfiguration": {
     "awsvpcConfiguration": {
-      "subnets": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"], // Replace with your subnet IDs
-      "securityGroups": ["sg-xxxxxxxx"], // Replace with your security group ID
+      "subnets": ["subnet-029fd228fb3652dff", "subnet-0ae0f2850346a980d"],
+      "securityGroups": ["sg-0b65717d0a2dea668"],
       "assignPublicIp": "ENABLED"
     }
   }

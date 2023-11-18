@@ -2,6 +2,8 @@
 
 Welcome to the infrastructure setup for the Echo Playground project! Here, we'll guide you through the necessary steps to get your environment up and running on AWS with ECS and Fargate. We're targeting AWS's `ap-southeast-2` region for this setup.
 
+- Todo - Fargate doesn't have a public IP address so I need to add a load balancer to the setup.
+
 ## Prerequisites
 
 To make this process smooth, you'll need:
