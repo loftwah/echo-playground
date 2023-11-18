@@ -1,0 +1,24 @@
+# Development Dockerfile
+# Start with the latest Golang base image
+FROM golang:latest
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files
+COPY go.mod go.sum ./
+
+# Download the dependencies
+RUN go mod download
+
+# Install air for hot reloading
+RUN go install github.com/cosmtrek/air@latest
+
+# Copy the source code into the container
+COPY . .
+
+# Expose port 1323 for the application
+EXPOSE 1323
+
+# Command to run the application using air
+CMD ["air"]
