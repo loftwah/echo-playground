@@ -55,10 +55,12 @@ Whether you're a code newbie or a seasoned wizard, Echo Playground is your gatew
    docker run -p 1323:1323 --env-file .env echo-playground-dev
    ```
 
-4. ** Run the Docker Container with Docker Compose:**
+   > **Note:** You should probably use Docker Compose to make things simpler.
+
+4. **Run the Docker Container with Docker Compose:**
 
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 5. **Access the Application:** Open your browser and navigate to <http://localhost:1323>.
