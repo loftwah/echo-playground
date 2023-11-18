@@ -67,43 +67,7 @@ Whether you're a code newbie or a seasoned wizard, Echo Playground is your gatew
 
 ### Deployment on AWS ECS
 
-> **Note:** This guide assumes you have an AWS ECR repository set up and AWS CLI configured with the necessary credentials. Eventually, we aim to automate this process using CI/CD with GitHub Actions.
-
-#### 1. **Building and Tagging the Docker Image for Production**
-
-First, we build the Docker image optimized for production. This image is a lean version of our application, free from development tools and configurations, ensuring efficiency and security in a production setting.
-
-```bash
-docker build -t echo-playground-prod .
-docker tag echo-playground-prod <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground-prod:latest
-```
-
-Replace `<aws_account_id>` and `<region>` with your AWS account ID and region, respectively. This step tags the built image, making it ready for deployment in our AWS environment.
-
-#### 2. **Pushing the Docker Image to AWS ECR**
-
-Next, we push the tagged image to AWS ECR (Elastic Container Registry), a Docker container registry that makes it easy for us to manage, store, and deploy Docker container images.
-
-```bash
-docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground-prod:latest
-```
-
-This command uploads our production-ready Docker image to the cloud, making it accessible for deployment on AWS ECS.
-
-#### 3. **Continuing with ECS Deployment**
-
-With the image now in ECR, we proceed to deploy it on AWS ECS (Elastic Container Service), a highly scalable and high-performance container orchestration service.
-
-- **Create a Task Definition in ECS:** We define a task in `ecs/task-def.json`, which includes our container configuration, resource allocation (CPU and memory), and network settings. It serves as a blueprint for how our Docker container should run on ECS.
-- **Set Up the ECS Service:** The `ecs/service-def.json` configures the ECS service. Here, we specify the cluster, service name, and network configuration. The service ensures our application is maintained at the desired state, handling tasks like starting new instances if needed and managing public IP assignment.
-- **Deploy Using ECS:** Finally, we use the AWS CLI to register the task definition and create the service in ECS. This process tells ECS how to run our application, where to run it, and how to manage networking aspects.
-
-```bash
-aws ecs register-task-definition --cli-input-json file://ecs/task-def.json
-aws ecs create-service --cli-input-json file://ecs/service-def.json
-```
-
-These commands set everything in motion, deploying our Echo Playground application in the AWS cloud, ready to serve users at scale.
+See [ecs/README.md](ecs/README.md) for detailed instructions on deploying the application on AWS ECS.
 
 ## Built With
 
