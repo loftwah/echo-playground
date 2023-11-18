@@ -1,14 +1,14 @@
 {
-    "cluster": "echo-playground",
-    "serviceName": "echo-playground",
-    "taskDefinition": "echo-playground",
-    "desiredCount": 1,
-    "launchType": "EC2",
-    "networkConfiguration": {
-      "awsvpcConfiguration": {
-        "subnets": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"],
-        "securityGroups": ["sg-xxxxxxxx"],
-        "assignPublicIp": "ENABLED"
-      }
+  "cluster": "echo-playground",
+  "serviceName": "echo-playground",
+  "taskDefinition": "echo-playground",
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": ["subnet-xxxxxxxx", "subnet-xxxxxxxx"], // Replace with your subnet IDs
+      "securityGroups": ["sg-xxxxxxxx"], // Replace with your security group ID
+      "assignPublicIp": "ENABLED"
     }
   }
+}

@@ -1,22 +1,23 @@
 {
-    "family": "echo-playground",
-    "containerDefinitions": [
-      {
-        "name": "echo-playground",
-        "image": "<aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest",
-        "cpu": 128,
-        "memory": 128,
-        "essential": true,
-        "portMappings": [
-          {
-            "containerPort": 1323,
-            "hostPort": 1323
-          }
-        ]
-      }
-    ],
-    "requiresCompatibilities": ["EC2"],
-    "networkMode": "bridge",
-    "cpu": "128",
-    "memory": "128"
-  }
+  "family": "echo-playground",
+  "taskDefinition": "echo-playground",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "executionRoleArn": "arn:aws:iam::your_account_id:role/ecsTaskExecutionRole", // Replace with your actual role ARN
+  "cpu": "256", // Adjust as needed
+  "memory": "512", // Adjust as needed
+  "containerDefinitions": [
+    {
+      "name": "echo-playground",
+      "image": "<aws_account_id>.dkr.ecr.<region>.amazonaws.com/echo-playground:latest",
+      "cpu": 128,
+      "memory": 256, // This should be less than the task's memory
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 1323
+        }
+      ]
+    }
+  ]
+}
