@@ -3,7 +3,7 @@ name: Go Build and Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.18'
+          go-version: "1.18"
 
       - name: Check out code
         uses: actions/checkout@v3
@@ -30,10 +30,10 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref || 'manual-trigger' }}
+          release_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref || 'Manual Release' }}
           draft: false
           prerelease: false
 
