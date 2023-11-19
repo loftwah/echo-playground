@@ -1,117 +1,79 @@
 # Infrastructure as Code for Echo Playground
 
-Welcome to the infrastructure setup for the Echo Playground project! Here, we'll guide you through the necessary steps to get your environment up and running on AWS with ECS and Fargate. We're targeting AWS's `ap-southeast-2` region for this setup.
-
-- Todo - Fargate doesn't have a public IP address so I need to add a load balancer to the setup.
+Welcome to the Echo Playground project infrastructure setup! This guide outlines the steps to deploy your environment on AWS using ECS with Fargate in the `ap-southeast-2` region.
 
 ## Prerequisites
 
-To make this process smooth, you'll need:
+Before starting, ensure you have the following:
 
-- **AWS CLI:** Configured with the appropriate credentials.
-- **Docker:** To build and push the Docker image.
-- **A Docker Image:** Available in Docker Hub or AWS ECR.
+- **AWS CLI:** Configured with the correct credentials.
+- **Docker:** For building and pushing the Docker image.
+- **Docker Image:** Available in Docker Hub or AWS ECR.
 
 ## Infrastructure Components
 
-Our setup involves a few key AWS components:
+Our AWS setup includes:
 
-- **ECS (Elastic Container Service):** We'll deploy our application as a task in ECS using the Fargate launch type, which abstracts away the underlying server infrastructure.
-- **ECR (Elastic Container Registry):** Our Docker image will be stored here. If you're using Docker Hub, you can skip this part.
-- **VPC (Virtual Private Cloud):** We'll use the default VPC configured in your AWS account.
-- **Subnets:** We need at least two subnets for high availability. These subnets are typically available in your default VPC.
-- **Security Group:** We'll create a security group to define the network access rules for our ECS tasks.
+- **ECS (Elastic Container Service):** Using Fargate for serverless task execution.
+- **ECR (Elastic Container Registry):** To store Docker images.
+- **VPC (Virtual Private Cloud):** Utilizing the default VPC.
+- **Subnets:** Using at least two for high availability.
+- **Security Group:** Defining ECS task network rules.
+- **Application Load Balancer (ALB):** To distribute incoming traffic.
 
 ## Step-by-Step Setup
 
-### 1. Building and Pushing the Docker Image
+### 1. Build and Push the Docker Image
 
-Build your Docker image and push it to ECR or Docker Hub. If using ECR, the process typically involves:
+Navigate to the `ecs` directory and run the `build-push-ecr.sh` script:
 
 ```bash
-docker build -t echo-playground-prod .
-docker tag echo-playground-prod <aws_account_id>.dkr.ecr.ap-southeast-2.amazonaws.com/echo-playground-prod:latest
-aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.ap-southeast-2.amazonaws.com
-docker push <aws_account_id>.dkr.ecr.ap-southeast-2.amazonaws.com/echo-playground-prod:latest
+cd ecs
+./build-push-ecr.sh
 ```
 
-### 2. Setting Up the AWS Infrastructure
+This script creates the ECR repository and pushes your Docker image.
 
-Run the provided bash script (`setup-aws-infra.sh`) to configure your AWS environment. This script will create a security group and identify the default VPC and subnets for you.
+### 2. Deploy AWS Infrastructure with Terraform
 
-### 3. Updating ECS Configuration Files
+Navigate to the `terraform` subdirectory:
 
-With the output from the bash script, update the `ecs/service-def.json` and `ecs/task-def.json` files with the correct VPC, subnet, and security group IDs.
+```bash
+cd terraform
+```
 
-### 4. Deploying to ECS
+Execute the following Terraform commands:
 
-Finally, deploy your application to ECS using the second bash script (`deploy-to-ecs.sh`), which automates the ECS task and service creation.
+```bash
+terraform init
+terraform plan
+terraform apply
+```
 
-## Conclusion
+### 3. Testing and Verification
 
-Once you've completed these steps, your Echo Playground application will be live on AWS ECS, leveraging the power and simplicity of Fargate. This setup ensures a scalable, secure, and manageable deployment, letting you focus on the fun part - coding!
+After Terraform successfully applies:
 
-## Create an Application Load Balancer
-
-1. **Navigate to the EC2 Dashboard**: Go to the EC2 section in the AWS Management Console.
-
-2. **Load Balancers**: Under the "Load Balancing" section in the navigation pane, click on "Load Balancers".
-
-3. **Create Load Balancer**: Click the “Create Load Balancer” button.
-
-4. **Select Type**: Choose “Application Load Balancer”, then click “Create”.
-
-5. **Configure Load Balancer**:
-
-   - Set a name for your load balancer (e.g., `echo-playground-alb`).
-   - Select the VPC and subnets (choose the subnets you are using for your ECS service).
-   - Configure the security settings (HTTP/HTTPS).
-   - Set up security groups (use the same security group as your ECS tasks or create a new one that allows inbound HTTP/HTTPS).
-
-6. **Configure Routing**: Create a new target group.
-
-   - Set a name (e.g., `echo-playground-tg`).
-   - Choose "IP" as the target type.
-   - Specify protocol (HTTP), port (the port your application listens on, e.g., 1323), and VPC.
-
-7. **Register Targets**: You can skip this step because ECS will manage the targets.
-
-8. **Review and Create**: Review the settings and create the load balancer.
-
-### Integrate with ECS
-
-1. **Navigate to the ECS Dashboard**: In the AWS Management Console, go to the Elastic Container Service (ECS) section.
-
-2. **Clusters**: Click on “Clusters” and select your existing cluster (`echo-playground`).
-
-3. **Services**: Go to the “Services” tab.
-
-4. **Create or Update Service**:
-
-   - If creating a new service, click “Create” and select the task definition (`echo-playground`).
-   - If updating an existing service, select the service and click “Update”.
-
-5. **Configure Network**:
-
-   - In the load balancing section, choose the load balancer type (Application Load Balancer).
-   - Select the load balancer name you created (`echo-playground-alb`).
-   - Set the container name and port (`1323`).
-   - Under “Load balancer listener”, choose the listener port you set up on your ALB (usually 80 or 443).
-   - For the target group, select the target group you created (`echo-playground-tg`).
-
-6. **Review and Deploy**: Review your configuration and click “Create Service” or “Update Service”.
-
-### Test and Verify
-
-- Once the service is updated and the tasks are running, go to the ALB’s DNS URL. You should be able to access your application via the load balancer’s DNS name.
-- Monitor the target group in the EC2 console to ensure your tasks are healthy and properly registered.
+- **Access the Application**: Visit the ALB DNS URL (`echo-playground-alb-635238929.ap-southeast-2.elb.amazonaws.com`) in your browser.
+- **ECS Console Check**: Verify the ECS service and tasks are running correctly.
+- **ALB Monitoring**: In AWS Console, check the target group for proper ECS task routing.
 
 ### DNS Configuration
 
-- Manually set up a DNS record in your DNS provider to point to the ALB's DNS name.
+Optionally, configure a DNS record to point to the ALB's DNS name for easier access.
 
-### Considerations
+## Considerations
 
-- **Security Settings**: Ensure your security groups are correctly configured to allow traffic from the internet (or your specific IP range) to the ALB, and from the ALB to the ECS tasks.
-- **Health Checks**: Configure health checks in your target group to ensure that unhealthy tasks are replaced.
-- **SSL/TLS**: If you want to use HTTPS, you'll need an SSL certificate. You can request and manage SSL certificates via AWS Certificate Manager.
+- **Security Settings**: Review and maintain security group settings for ALB and ECS.
+- **Health Checks**: Regularly monitor the target group's health checks.
+- **SSL/TLS**: Utilize AWS Certificate Manager for secure HTTPS communication.
+
+## Notes
+
+- The setup utilizes the default VPC and subnets.
+- The ALB ensures the application can handle traffic directed to the ECS service.
+- Monitor AWS costs and usage, particularly for Fargate tasks and the ALB.
+
+## Conclusion
+
+Your Echo Playground application is now live on AWS ECS using Fargate. This infrastructure-as-code approach ensures a manageable and scalable environment for your application.

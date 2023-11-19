@@ -14,6 +14,7 @@ resource "aws_lb_target_group" "echo_tg" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.default.id
+  target_type = "ip"  # Update this line
 
   health_check {
     protocol            = "HTTP"
