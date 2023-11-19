@@ -18,7 +18,7 @@ resource "aws_lb_target_group" "echo_tg" {
 
   health_check {
     protocol            = "HTTP"
-    path                = "/"  # Update to a valid path if needed
+    path                = "/health"  # Update to a valid path if needed
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
