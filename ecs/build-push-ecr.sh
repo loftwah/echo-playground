@@ -12,15 +12,6 @@ SERVICE_NAME="echo-playground-service"
 # Configure AWS region
 aws configure set default.region $AWS_REGION
 
-# Create or check the ECS cluster
-CLUSTER_EXISTS=$(aws ecs describe-clusters --clusters $CLUSTER_NAME --query 'clusters[0].clusterName' --output text 2>/dev/null)
-if [ "$CLUSTER_EXISTS" != "$CLUSTER_NAME" ]; then
-    aws ecs create-cluster --cluster-name $CLUSTER_NAME
-    echo "ECS cluster $CLUSTER_NAME created."
-else
-    echo "ECS cluster $CLUSTER_NAME already exists."
-fi
-
 # Check if the ECR repository exists
 REPO_EXISTS=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --output text --query 'repositories[0].repositoryName' 2>/dev/null)
 if [ "$REPO_EXISTS" != "$ECR_REPO_NAME" ]; then
@@ -45,23 +36,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Change back to the script's original directory
-cd -
-
-# Register ECS task definition for Fargate
-if ! aws ecs register-task-definition --cli-input-json file://task-def.json; then
-    echo "Task definition registration failed."
-    exit 1
-fi
-
-# Check if the ECS service exists and update or create it
-SERVICE_EXISTS=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME --query 'services[0].serviceName' --output text 2>/dev/null)
-if [ "$SERVICE_EXISTS" != "$SERVICE_NAME" ]; then
-    aws ecs create-service --cli-input-json file://service-def.json
-    echo "ECS service $SERVICE_NAME created."
-else
-    aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment
-    echo "ECS service $SERVICE_NAME updated."
-fi
-
-echo "Deployment complete."
+echo "Image ready."
