@@ -13,36 +13,25 @@ env:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy to AWS ECS
+    name: Build and push Docker image to Amazon ECR
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check Out Source Code
-      uses: actions/checkout@v2
+      - name: Check Out Source Code
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ${{ env.AWS_REGION }}
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Build, Tag, and Push Image to Amazon ECR
-      run: |
-        docker build -t $ECR_REPOSITORY:latest .
-        docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-        docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ecs/task-def.json
-        container-name: echo-playground
-        image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        service: $ECS_SERVICE
-        cluster: $ECS_CLUSTER
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+      - name: Build, Tag, and Push Image to Amazon ECR
+        run: |
+          docker build -t $ECR_REPOSITORY:latest .
+          docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
