@@ -19,11 +19,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Create Temporary Directory
+        run: mkdir -p ./tmp
+
       - name: Build Binary
         run: |
-          GOOS=linux GOARCH=amd64 go build -o ./tmp/myapp ./main.go
-          # Replace './tmp/myapp' with your desired output binary path
-          # The path to the main Go file is './main.go'
+          GOOS=linux GOARCH=amd64 go build -o ./tmp/echoplayground ./main.go
+          # Now using 'echoplayground' as the binary name, adjust if necessary
 
       - name: Create Release
         id: create_release
@@ -42,6 +44,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./tmp/myapp
-          asset_name: myapp-linux-amd64
+          asset_path: ./tmp/echoplayground
+          asset_name: echoplayground-linux-amd64
           asset_content_type: application/octet-stream
