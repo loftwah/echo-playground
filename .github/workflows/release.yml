@@ -1,0 +1,47 @@
+name: Go Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Build Binary
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o ./tmp/echoplayground ./main.go
+          # Replace './tmp/echoplayground' with your desired output binary path
+          # The path to the main Go file is './main.go' as per your structure
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Binary to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tmp/echoplayground
+          asset_name: echoplayground-linux-amd64
+          asset_content_type: application/octet-stream

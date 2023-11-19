@@ -13,7 +13,7 @@ env:
 
 jobs:
   build-and-deploy:
-    name: Build and push Docker image to Amazon ECR
+    name: Build and Deploy to AWS ECS
     runs-on: ubuntu-latest
 
     steps:
@@ -35,3 +35,18 @@ jobs:
           docker build -t $ECR_REPOSITORY:latest .
           docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
           docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs/task-def.json
+          container-name: echo-playground
+          image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          service: $ECS_SERVICE
+          cluster: $ECS_CLUSTER
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
