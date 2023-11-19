@@ -29,6 +29,7 @@ func main() {
 	e.GET("/students/:id/report", getStudentReport)
 	e.GET("/flagged-students", handleFlaggedStudents)
 	e.GET("/flagged-student-messages", handleFlaggedStudentMessages)
+	e.GET("/health", handleHealthCheck)
 
 	e.Logger.Fatal(e.Start(":" + getServerPort()))
 }
@@ -47,6 +48,10 @@ func handleRoot(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.String(http.StatusOK, response)
+}
+
+func handleHealthCheck(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{"status": "OK", "message": "Service is operational"})
 }
 
 func getStudent(c echo.Context) error {
