@@ -65,6 +65,7 @@ func getStudent(c echo.Context) error {
 	return c.JSON(http.StatusOK, studentData)
 }
 
+// triggering a build
 func getStudentReport(c echo.Context) error {
 	studentData, err := readStudentData(c.Param("id"))
 	if err != nil {
