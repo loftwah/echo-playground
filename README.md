@@ -57,6 +57,44 @@ Step into Echo Playground, where coders, whether novice or ninja, can explore, i
 
 4. **Witness the Magic:** <http://localhost:1323>
 
+## Endpoints
+
+* **Root Endpoint**:
+
+  ```bash
+  curl -v http://localhost:1323/
+  ```
+
+* **Health Check**:
+
+  ```bash
+  curl -v http://localhost:1323/health
+  ```
+
+* **Get Student Data** (replace `{student_id}` with an actual student ID):
+
+  ```bash
+  curl -v http://localhost:1323/students/{student_id}
+  ```
+
+* **Get Student Report** (replace `{student_id}` with an actual student ID):
+
+  ```bash
+  curl -v http://localhost:1323/students/{student_id}/report
+  ```
+
+* **Flagged Students** (for students with high absence counts):
+
+  ```bash
+  curl -v http://localhost:1323/flagged-students
+  ```
+
+* **Flagged Student Messages** (to generate messages for students with high absences):
+
+  ```bash
+  curl -v http://localhost:1323/flagged-student-messages
+  ```
+
 ### AWS ECS Deployment
 
 Master the cloud with our guide in [ecs/README.md](ecs/README.md).
