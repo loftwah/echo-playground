@@ -95,6 +95,12 @@ Step into Echo Playground, where coders, whether novice or ninja, can explore, i
   curl -v http://localhost:1323/flagged-student-messages
   ```
 
+  * ** Flagged Student Messages SMS** (to generate messages for students with high absences):
+
+  ```bash
+  curl -v http://localhost:1323/flagged-student-sms-reports
+  ```
+
 ### AWS ECS Deployment
 
 Master the cloud with our guide in [ecs/README.md](ecs/README.md).
